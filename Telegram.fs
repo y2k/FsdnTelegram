@@ -18,7 +18,7 @@ type TelegramResponse = | SuccessResponse | BotBlockedResponse | UnknownErrorRes
 let sendToTelegramSingle (token: string) (user: string) message =
     try
         let bot = TelegramBotClient(token)
-        bot.SendTextMessageAsync(user, message, parseMode = Types.Enums.ParseMode.Html).Result |> ignore
+        bot.SendTextMessageAsync(user, message, parseMode = Types.Enums.ParseMode.Default).Result |> ignore
         SuccessResponse
     with
     | :? AggregateException as ae -> 
