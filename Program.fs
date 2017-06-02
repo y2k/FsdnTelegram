@@ -6,7 +6,7 @@ module A   = FsdnApi
 
 module Domain =
     let parseMessage (message: string) =
-        match message.Trim() with
+        match message.Trim().Replace('‘', '\'') with
         | "/start" -> Error "Введите сигнатуру функции.\nК примеру: string -> int"
         | x        -> Ok x
 
