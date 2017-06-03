@@ -7,7 +7,7 @@ module A   = FsdnApi
 module Domain =
     let parseMessage (message: string) =
         match message.Trim().Replace('‘', '\'') with
-        | "/start" -> Error "Введите сигнатуру функции.\nК примеру: string -> int"
+        | "/start" -> Error "Enter function signature.\nFor example: string -> int"
         | x        -> Ok x
 
     let resultToMessage (x: Result<A.Response list, string>) =
@@ -29,7 +29,7 @@ let main argv =
                                           let! results = A.execute { signature = i }
                                           return Domain.resultToMessage results
                                       }
-                Bot.sendToTelegramSingle argv.[0] x.user a |> ignore
+                Bot.send argv.[0] x.user a |> ignore
             } |> Async.Start)
 
     printfn "Listening for updates..."

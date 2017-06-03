@@ -1,10 +1,11 @@
 module Telegram
 
-open Telegram.Bot
 open System
+open Telegram.Bot
 module RX = Observable
 
 type Message = { text: string; user: string }
+type TelegramResponse = | SuccessResponse | BotBlockedResponse | UnknownErrorResponse
 
 let listerForMessages (token: string) =
     let bot = TelegramBotClient(token)
@@ -14,8 +15,7 @@ let listerForMessages (token: string) =
     bot.StartReceiving()
     result
 
-type TelegramResponse = | SuccessResponse | BotBlockedResponse | UnknownErrorResponse
-let sendToTelegramSingle (token: string) (user: string) message =
+let send (token: string) (user: string) message =
     try
         let bot = TelegramBotClient(token)
         bot.SendTextMessageAsync(user, message, parseMode = Types.Enums.ParseMode.Default).Result |> ignore
