@@ -7,7 +7,7 @@ module RX = Observable
 type Message = { text: string; user: string }
 type TelegramResponse = | SuccessResponse | BotBlockedResponse | UnknownErrorResponse
 
-let listerForMessages (token: string) =
+let listenForMessages (token: string) =
     let bot = TelegramBotClient(token)
     let result = bot.OnUpdate 
                  |> RX.map (fun x -> x.Update)
