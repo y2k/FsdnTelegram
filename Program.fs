@@ -13,7 +13,7 @@ module Domain =
     let resultToMessage (x: Result<A.Response list, string>) =
         match x with
         | Error e -> e + "\nОшибка, возможно у вас неправильная сигнатура функции.\nПример правильной: string -> int"
-        | Ok []   -> "Не найденно ни одной сигнатуры функции :\\"
+        | Ok []   -> "0 results.\nНе найденно ни одной сигнатуры функции :\\"
         | Ok xs   -> xs |> List.map (fun x -> sprintf "%O :: %O \n%O\n\n" x.clazz x.method x.url) 
                         |> List.reduce (+)
 
