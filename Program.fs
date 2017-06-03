@@ -19,7 +19,7 @@ module Domain =
 
 [<EntryPoint>]
 let main argv =
-    Bot.listerForMessages argv.[0]
+    Bot.listenForMessages argv.[0]
         |> RX.add (fun x -> 
             async {
                 let pm = Domain.parseMessage x.text
