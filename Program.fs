@@ -6,9 +6,9 @@ module A  = FsdnApi
 
 module Domain =
     let parseMessage (message: string) =
-        match message.Trim().Replace('‘', '\'') with
-        | "/start" -> Error "Enter function signature.\nFor example: string -> int"
-        | x        -> Ok x
+        match message with
+        | null | "/start" -> Error "Enter function signature.\nFor example: string -> int"
+        | x               -> Ok <| x.Trim().Replace('‘', '\'')
 
     let resultToMessage (x: Result<A.Response list, string>) =
         match x with
