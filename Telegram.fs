@@ -7,6 +7,10 @@ module RX = Observable
 type Message = { text: string; user: string }
 type TelegramResponse = | SuccessResponse | BotBlockedResponse | UnknownErrorResponse
 
+let setProgress (token: string) (user: string) =
+    let bot = TelegramBotClient(token)
+    bot.SendChatActionAsync(user, Types.Enums.ChatAction.Typing) |> Async.AwaitTask
+
 let listenForMessages (token: string) =
     let bot = TelegramBotClient(token)
     let result = bot.OnUpdate 

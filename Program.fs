@@ -1,8 +1,8 @@
 ﻿open System
 
-module RX  = Observable
-module Bot = Telegram
-module A   = FsdnApi
+module RX = Observable
+module T  = Telegram
+module A  = FsdnApi
 
 module Domain =
     let parseMessage (message: string) =
@@ -19,17 +19,19 @@ module Domain =
 
 [<EntryPoint>]
 let main argv =
-    Bot.listenForMessages argv.[0]
+    let token = argv.[0]
+    T.listenForMessages token
         |> RX.add (fun x -> 
             async {
                 let pm = Domain.parseMessage x.text
                 let! a = match pm with
                          | Error e -> async.Return e
                          | Ok i    -> async {
+                                          do! T.setProgress token x.user
                                           let! results = A.execute { signature = i }
                                           return Domain.resultToMessage results
                                       }
-                Bot.send argv.[0] x.user a |> ignore
+                T.send token x.user a |> ignore
             } |> Async.Start)
 
     printfn "Listening for updates..."
