@@ -2,6 +2,7 @@ module Telegram
 
 open System
 open Telegram.Bot
+open Telegram.Bot.Types
 module RX = Observable
 
 type Message = { text: string; user: string }
@@ -9,7 +10,7 @@ type TelegramResponse = | SuccessResponse | BotBlockedResponse | UnknownErrorRes
 
 let setProgress (token: string) (user: string) =
     let bot = TelegramBotClient(token)
-    bot.SendChatActionAsync(user, Types.Enums.ChatAction.Typing) |> Async.AwaitTask
+    bot.SendChatActionAsync(user |> ChatId, Types.Enums.ChatAction.Typing) |> Async.AwaitTask
 
 let listenForMessages (token: string) =
     let bot = TelegramBotClient(token)
@@ -22,7 +23,7 @@ let listenForMessages (token: string) =
 let send (token: string) (user: string) message =
     try
         let bot = TelegramBotClient(token)
-        bot.SendTextMessageAsync(user, message, parseMode = Types.Enums.ParseMode.Default).Result |> ignore
+        bot.SendTextMessageAsync(user |> ChatId, message, parseMode = Types.Enums.ParseMode.Default).Result |> ignore
         SuccessResponse
     with
     | :? AggregateException as ae -> 
