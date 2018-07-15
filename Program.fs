@@ -1,6 +1,5 @@
 ﻿open System
 
-module RX = Observable
 module T  = Telegram
 module A  = FsdnApi
 
@@ -18,22 +17,23 @@ module Domain =
                         |> List.reduce (+)
 
 [<EntryPoint>]
-let main argv =
-    let token = argv.[0]
+let main _ =
+    let token = Environment.GetEnvironmentVariable "TELEGRAM_TOKEN"
+
     T.listenForMessages token
-        |> RX.add (fun x -> 
-            async {
-                let pm = Domain.parseMessage x.text
-                let! a = match pm with
-                         | Error e -> async.Return e
-                         | Ok i    -> async {
-                                          do! T.setProgress token x.user
-                                          let! results = A.execute { signature = i }
-                                          return Domain.resultToMessage results
-                                      }
-                T.send token x.user a |> ignore
-            } |> Async.Start)
+    |> Observable.add (fun x -> 
+        async {
+            let pm = Domain.parseMessage x.text
+            let! a = match pm with
+                     | Error e -> async.Return e
+                     | Ok i    -> async {
+                                      do! T.setProgress x.user
+                                      let! results = A.execute { signature = i }
+                                      return Domain.resultToMessage results
+                                  }
+            do! T.send x.user a |> Async.Ignore
+        } |> Async.Start)
 
     printfn "Listening for updates..."
-    Threading.Thread.Sleep(-1);
+    Threading.Thread.Sleep -1
     0

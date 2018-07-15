@@ -3,31 +3,40 @@ module Telegram
 open System
 open Telegram.Bot
 open Telegram.Bot.Types
-module RX = Observable
+
+let private token = Environment.GetEnvironmentVariable "TELEGRAM_TOKEN"
 
 type Message = { text: string; user: string }
 type TelegramResponse = | SuccessResponse | BotBlockedResponse | UnknownErrorResponse
 
-let setProgress (token: string) (user: string) =
-    let bot = TelegramBotClient(token)
-    bot.SendChatActionAsync(user |> ChatId, Types.Enums.ChatAction.Typing) |> Async.AwaitTask
+let setProgress (user : string) =
+    async {
+        let bot = TelegramBotClient (token)
+        do! bot.SendChatActionAsync(user |> ChatId, Types.Enums.ChatAction.Typing) 
+            |> Async.AwaitTask
+    }
 
-let listenForMessages (token: string) =
-    let bot = TelegramBotClient(token)
-    let result = bot.OnUpdate 
-                 |> RX.map (fun x -> x.Update)
-                 |> RX.map (fun x -> { text = x.Message.Text; user = string x.Message.From.Id })
+let listenForMessages (token : string) =
+    let bot = TelegramBotClient (token)
+    let result = 
+        bot.OnUpdate
+        |> Observable.map (fun x -> { text = x.Update.Message.Text
+                                      user = string x.Update.Message.From.Id })
     bot.StartReceiving()
     result
 
-let send (token: string) (user: string) message =
-    try
-        let bot = TelegramBotClient(token)
-        bot.SendTextMessageAsync(user |> ChatId, message, parseMode = Types.Enums.ParseMode.Default).Result |> ignore
-        SuccessResponse
-    with
-    | :? AggregateException as ae -> 
-        match ae.InnerException with
-        | :? Exceptions.ApiRequestException -> BotBlockedResponse
-        | _                                 -> reraise()
-    | _ -> UnknownErrorResponse
+let send (user : string) message =
+    async {
+        try
+            let bot = TelegramBotClient (token)
+            do! bot.SendTextMessageAsync (user |> ChatId, message, parseMode = Types.Enums.ParseMode.Default)
+                |> Async.AwaitTask
+                |> Async.Ignore
+            return SuccessResponse
+        with
+        | :? AggregateException as ae -> 
+            match ae.InnerException with
+            | :? Exceptions.ApiRequestException -> return BotBlockedResponse
+            | _                                 -> return failwith "ERROR"
+        | _ -> return UnknownErrorResponse
+    }

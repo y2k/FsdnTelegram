@@ -13,7 +13,7 @@ type JsonApi = { link: string; name: JsonName }
 type JsonValues = { api: JsonApi }
 type JsonRespones = { values: JsonValues[] }
 
-let private baseUrl = "http://fsdn.azurewebsites.net/api/search?exclusion=Argu%2BNewtonsoft.Json%2BFAKE.Lib%2BFParsec%2BFSharp.Compiler.Service%2BFSharp.Collections.ParallelSeq%2BFSharp.Control.AsyncSeq%2BFSharp.Control.Reactive%2BFSharp.Data%2BFSharp.ViewModule.Core%2BFsPickler%2BFsUnit%2BSuave%2BSuave.Experimental%2BSystem.Reactive.Core%2BSystem.Reactive.Interfaces%2BSystem.Reactive.Linq%2BSystem.ValueTuple&respect_name_difference=enabled&greedy_matching=disabled&ignore_parameter_style=enabled&ignore_case=enabled&swap_order=enabled&complement=enabled&limit=10&language=fsharp&single_letter_as_variable=enabled&query="
+let private baseUrl = "http://fsdn.azurewebsites.net/api/search?exclusion=Argu%2BNewtonsoft.Json%2BFAKE.Lib%2BFParsec%2BFSharp.Compiler.Service%2BFSharp.Collections.ParallelSeq%2BFSharp.Control.AsyncSeq%2BFSharp.Control.Reactive%2BFSharp.Data%2BFSharp.ViewModule.Core%2BFsPickler%2BFsUnit%2BSuave%2BSuave.Experimental%2BSystem.Reactive.Core%2BSystem.Reactive.Interfaces%2BSystem.Reactive.Linq%2BSystem.ValueTuple&respect_name_difference=enabled&greedy_matching=disabled&ignore_parameter_style=enabled&ignore_case=enabled&swap_order=enabled&complement=enabled&limit=10&language=fsharp&single_letter_as_variable=enabled&substring=enabled&query="
 
 let execute (req: Request) = async {
     use client = new HttpClient()
