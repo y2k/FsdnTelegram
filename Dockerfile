@@ -1,9 +1,12 @@
-FROM microsoft/dotnet:latest
+FROM microsoft/dotnet:2.1-sdk
 
-ARG source=.
 WORKDIR /app
-COPY $source .
+COPY . /app
+RUN dotnet publish -c Release -r linux-x64 --self-contained false
 
-RUN dotnet restore
+FROM microsoft/dotnet:2.1-runtime
 
-CMD ["/bin/bash", "-c", "dotnet run $TOKEN"]
+WORKDIR /app
+COPY --from=0 /app/bin/Release/netcoreapp2.0/linux-x64/publish .
+
+ENTRYPOINT ["dotnet", "FsdnTelegram.dll"]
