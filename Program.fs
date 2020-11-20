@@ -1,7 +1,7 @@
 ﻿open System
 
-module T  = Telegram
-module A  = FsdnApi
+module T = Telegram
+module A = FsdnApi
 
 module Domain =
     let parseMessage (message: string) =
@@ -13,7 +13,7 @@ module Domain =
         match x with
         | Error e -> e + "\nОшибка, возможно у вас неправильная сигнатура функции.\nПример правильной: string -> int"
         | Ok []   -> "0 results.\nНе найденно ни одной сигнатуры функции :\\"
-        | Ok xs   -> xs |> List.map (fun x -> sprintf "%O :: %O \n%O\n\n" x.clazz x.method x.url) 
+        | Ok xs   -> xs |> List.map (fun x -> sprintf "%O :: %O \n%O\n\n" x.clazz x.method x.url)
                         |> List.reduce (+)
 
 [<EntryPoint>]
@@ -21,7 +21,7 @@ let main _ =
     let token = Environment.GetEnvironmentVariable "TELEGRAM_TOKEN"
 
     T.listenForMessages token
-    |> Observable.add (fun x -> 
+    |> Observable.add (fun x ->
         async {
             let pm = Domain.parseMessage x.text
             let! a = match pm with
